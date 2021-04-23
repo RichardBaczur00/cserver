@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
+#include "command_utils.h"
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
@@ -22,7 +23,7 @@ int main(int argc, char **argv) {
 
 	fd_set readfds;
 
-	char *message = "ECHO Daemon v1.0 \r\n";
+	char *message = "ECHO BaczaurServer v1.0 \r\n";
 
 	for (i = 0; i < max_clients; ++i)
 	{
@@ -133,6 +134,7 @@ int main(int argc, char **argv) {
 				else 
 				{
 					buffer[valread] = '\0';
+					parse_command(buffer);
 					send(sd, buffer, strlen(buffer), 0);
 				}
 			}
