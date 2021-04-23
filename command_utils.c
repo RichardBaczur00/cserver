@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "command_utils.h"
+#include "requests/get.h"
 
 void log_request(struct command request) {
 	printf("Request received: \nMethod: \t %d\nURL: \t %s\nData type: \t %s\nData: \t %s\n",
@@ -59,6 +60,8 @@ int parse_command(char *raw_request, int file_descriptor) {
 		token = strtok(NULL, ";");
 	}
 
+	free(token);
+
 	log_request(request);
 
 	execute_command(request, file_descriptor);
@@ -66,6 +69,62 @@ int parse_command(char *raw_request, int file_descriptor) {
 	return 0;
 }
 
-int execute_command(struct command request, int file_descriptor) {
-	
+int dummy_callback(char* incoming, int file_descriptor) {
+	printf("Inside handler\n");
+	incoming[strlen(incoming) - 2] = '\0';
+	printf("Data received: %s\n", incoming);
+	printf("Data expected: %s\n", "ping");
+	printf("Comparison: %d\n", strcmp(incoming, "ping"));
+	if (strcmp(incoming, "ping") == 0) {
+		send(file_descriptor, "pong", strlen("pong"), 0);
+	}
+	else {
+		send(file_descriptor, "pingme", strlen("pingme"), 0);
+	}
 }
+
+void add_dummy_get() {
+	printf("Adding the dummy path\n");
+	add_path("http://localhost:8080/ping");
+	set_callback("http://localhost:8080/ping", &dummy_callback);
+	printf("Added the dummy path\n");
+}
+
+int execute_command(struct command request, int file_descriptor) {
+	char *url = (char*) calloc(30, sizeof(char));
+	char *data = (char*) calloc(100, sizeof(char));
+	add_dummy_get();
+
+	switch (request.method_code) {
+		case 1:
+
+			strcpy(url, request.url);
+			strcpy(data, request.data);
+
+			struct get_request new_request = find_request(url);
+			get(new_request, data, file_descriptor);
+
+			free(url);
+			free(data);
+
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		default:
+			// handle error
+			break;
+	}
+}
+
+
+
+
+
+
+
