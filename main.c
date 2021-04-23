@@ -134,8 +134,7 @@ int main(int argc, char **argv) {
 				else 
 				{
 					buffer[valread] = '\0';
-					parse_command(buffer);
-					send(sd, buffer, strlen(buffer), 0);
+					parse_command(buffer, sd);
 				}
 			}
 		}

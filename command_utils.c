@@ -2,13 +2,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include "command_utils.h"
 
 void log_request(struct command request) {
-	printf("Request received: \nMethod: \t %d\nData type: \t %s\nData: \t %s", request.method_code, request.data_type, request.data);
+	printf("Request received: \nMethod: \t %d\nURL: \t %s\nData type: \t %s\nData: \t %s\n",
+		       	request.method_code, request.url, request.data_type, request.data);
 }
 
-int parse_command(char *raw_request) {
+int parse_command(char *raw_request, int file_descriptor) {
 	char *token;
 	int line = 0;
 	struct command request;
@@ -58,9 +61,11 @@ int parse_command(char *raw_request) {
 
 	log_request(request);
 
+	execute_command(request, file_descriptor);
+
 	return 0;
 }
 
-int execute_command(struct command request) {
+int execute_command(struct command request, int file_descriptor) {
 	
 }

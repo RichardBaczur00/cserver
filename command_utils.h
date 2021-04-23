@@ -16,7 +16,7 @@ typedef struct command {
 };
 
 void log_request(struct command);
-int parse_command(char*);
-int execute_command(struct command);
+int parse_command(char*, int);
+int execute_command(struct command, int);
 
 #endif

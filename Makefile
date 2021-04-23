@@ -1,6 +1,6 @@
 CC = gcc
 TARGET = server 
-SRC = main.c command_utils.c
+SRC = main.c command_utils.c requests/get.c
      
 CFLAGS =
 FLAGS =
