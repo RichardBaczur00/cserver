@@ -8,8 +8,6 @@ typedef struct get_request {
 	int (* callback)(char* data, int file_descriptor);
 };
 
-int first_free_get = 0;
-
 int find_request_index(char*);
 struct get_request find_request(char*);
 void add_path(char*);

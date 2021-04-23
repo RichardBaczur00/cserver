@@ -70,7 +70,12 @@ int parse_command(char *raw_request, int file_descriptor) {
 }
 
 int dummy_callback(char* incoming, int file_descriptor) {
-	if (strcmp(incoming, "ping")) {
+	printf("Inside handler\n");
+	incoming[strlen(incoming) - 2] = '\0';
+	printf("Data received: %s\n", incoming);
+	printf("Data expected: %s\n", "ping");
+	printf("Comparison: %d\n", strcmp(incoming, "ping"));
+	if (strcmp(incoming, "ping") == 0) {
 		send(file_descriptor, "pong", strlen("pong"), 0);
 	}
 	else {
@@ -79,14 +84,17 @@ int dummy_callback(char* incoming, int file_descriptor) {
 }
 
 void add_dummy_get() {
+	printf("Adding the dummy path\n");
 	add_path("http://localhost:8080/ping");
 	set_callback("http://localhost:8080/ping", &dummy_callback);
+	printf("Added the dummy path\n");
 }
 
 int execute_command(struct command request, int file_descriptor) {
 	char *url = (char*) calloc(30, sizeof(char));
 	char *data = (char*) calloc(100, sizeof(char));
-	
+	add_dummy_get();
+
 	switch (request.method_code) {
 		case 1:
 
