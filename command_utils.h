@@ -14,7 +14,7 @@
 typedef struct _command {
 	int method_code;
 	char* url;
-	char* data_type;
+	int data_type;
 	char* data;
 } command;
 

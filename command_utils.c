@@ -59,11 +59,10 @@ int parse_command(char *raw_request, int file_descriptor) {
 				printf("Invalid data type, trying text");
 				request.data_type = TEXT;
 			}
-			//TODO: Add checking for certain types (for now text will do it)
 		} else {
 			// deal with data itself
-			strcat(request.data, token);
-			//TODO: Check whether the data matches the type declared above
+			request.data = (char*) calloc(strlen(token) + 1, sizeof(char));
+			strcpy(request.data, token);			
 		}
 
 		++line;
