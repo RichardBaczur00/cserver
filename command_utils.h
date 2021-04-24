@@ -6,17 +6,20 @@
 #define DELETE_TYPE 3
 #define PUT_TYPE 4
 #define PATCH_TYPE 5
+#define TEXT 0
+#define APPLICATION_JSON 1
+#define APPLICATION_XML 2
 
 
-typedef struct command {
+typedef struct _command {
 	int method_code;
 	char* url;
-	char* data_type;
+	int data_type;
 	char* data;
-};
+} command;
 
-void log_request(struct command);
+void log_request(command);
 int parse_command(char*, int);
-int execute_command(struct command, int);
+int execute_command(command, int);
 
 #endif
