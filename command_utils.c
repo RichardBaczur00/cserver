@@ -7,7 +7,7 @@
 #include "command_utils.h"
 #include "requests/get.h"
 
-void log_request(struct command request) {
+void log_request(command request) {
 	printf("Request received: \nMethod: \t %d\nURL: \t %s\nData type: \t %s\nData: \t %s\n",
 		       	request.method_code, request.url, request.data_type, request.data);
 }
@@ -15,14 +15,13 @@ void log_request(struct command request) {
 int parse_command(char *raw_request, int file_descriptor) {
 	char *token;
 	int line = 0;
-	struct command request;
+	command request;
 
 	printf("%s", raw_request);
 
 	// Allocations only for testing
 	// Dinamic allocations will soon be added
 	request.data_type = (char*) calloc(20, sizeof(char));
-	request.url = (char*) calloc(30, sizeof(char));
 	request.data = (char*) calloc(100, sizeof(char));
 
 	token = strtok(raw_request, ";");
@@ -44,10 +43,22 @@ int parse_command(char *raw_request, int file_descriptor) {
 				// handle error
 			}
 		} else if (line == 1) {
+			request.url = (char*) calloc(strlen(token) + 1, sizeof(char));
 			strcpy(request.url, token);
 		} else if (line == 2) {
 			// deal with content type
 			strcpy(request.data_type, token);
+			if (strcmp(token, "application/json") == 0) {
+				request.data_type = APPLICATION_JSON;
+			} else if (strcmp(token, "application/xml") == 0) {
+				request.data_type = APPLICATION_XML;
+			} else if (strcmp(token, "text") == 0) {
+				request.data_type = TEXT;
+			} else {
+				//TODO: Might add automated data typing
+				printf("Invalid data type, trying text");
+				request.data_type = TEXT;
+			}
 			//TODO: Add checking for certain types (for now text will do it)
 		} else {
 			// deal with data itself
@@ -90,7 +101,7 @@ void add_dummy_get() {
 	printf("Added the dummy path\n");
 }
 
-int execute_command(struct command request, int file_descriptor) {
+int execute_command(command request, int file_descriptor) {
 	char *url = (char*) calloc(30, sizeof(char));
 	char *data = (char*) calloc(100, sizeof(char));
 	add_dummy_get();
@@ -101,7 +112,7 @@ int execute_command(struct command request, int file_descriptor) {
 			strcpy(url, request.url);
 			strcpy(data, request.data);
 
-			struct get_request new_request = find_request(url);
+			get_request new_request = find_request(url);
 			get(new_request, data, file_descriptor);
 
 			free(url);

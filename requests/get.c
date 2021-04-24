@@ -4,7 +4,7 @@
 #include <string.h>
 #include "get.h"
 
-struct get_request get_paths[NUMBER_OF_UNIQUE_PATHS];
+get_request get_paths[NUMBER_OF_UNIQUE_PATHS];
 int first_free_get = 0;
 
 int find_request_index(char* path) {
@@ -15,7 +15,7 @@ int find_request_index(char* path) {
 	}
 }
 
-struct get_request find_request(char* path) {
+get_request find_request(char* path) {
 	for (int i = 0; i < first_free_get; ++i) {
 		if (strcmp(path, get_paths[i].url) == 0) {
 			return get_paths[i];
@@ -24,7 +24,7 @@ struct get_request find_request(char* path) {
 }
 
 void add_path(char* url) {
-	struct get_request *new_path;
+	get_request *new_path;
 	printf("new_path.url <- %s\n", url); 
 	new_path->url = (char*) calloc(30, sizeof(char));
 	strcpy(new_path->url, url);
@@ -38,7 +38,7 @@ void set_callback(char *path, int(* callback)(char*, int)) {
 	fflush(stdout);
 }
 
-int get(struct get_request path, char* data, int file_descriptor) {
+int get(get_request path, char* data, int file_descriptor) {
 	
 	fprintf(stdout, "callback address: %p \n", path.callback);
 	fflush(stdout);
