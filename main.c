@@ -96,12 +96,6 @@ int main(int argc, char **argv) {
 
 			printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
 
-			if (send(new_socket, message, strlen(message), 0) != strlen(message))
-			{
-				perror("send failed");
-				exit(EXIT_FAILURE);
-			}
-
 			printf("Welcome message sent successfully\n");
 
 			for (i = 0; i < max_clients; ++i)

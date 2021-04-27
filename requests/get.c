@@ -10,6 +10,7 @@ int first_free_get = 0;
 int find_request_index(char* path) {
 	for (int i = 0; i < first_free_get; ++i) {
 		if (strcmp(path, get_paths[i].url) == 0) {
+			fprintf(stderr, "\n%s <com> %s\n", path, get_paths[i].url);
 			return i;
 		}
 	}
@@ -18,6 +19,7 @@ int find_request_index(char* path) {
 get_request find_request(char* path) {
 	for (int i = 0; i < first_free_get; ++i) {
 		if (strcmp(path, get_paths[i].url) == 0) {
+			fprintf(stderr, "\n%s <com> %s\n", path, get_paths[i].url);
 			return get_paths[i];
 		}
 	}
