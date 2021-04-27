@@ -8,7 +8,7 @@
 #include "requests/get.h"
 
 void log_request(command request) {
-	printf("Request received: \nMethod: \t %d\nURL: \t %s\nData type: \t %s\nData: \t %s\n",
+	printf("Request received: \nMethod: \t %d\nURL: \t %s\nData type: \t %d\nData: \t %s\n",
 		       	request.method_code, request.url, request.data_type, request.data);
 }
 
@@ -21,7 +21,6 @@ int parse_command(char *raw_request, int file_descriptor) {
 
 	// Allocations only for testing
 	// Dinamic allocations will soon be added
-	request.data_type = (char*) calloc(20, sizeof(char));
 	request.data = (char*) calloc(100, sizeof(char));
 
 	token = strtok(raw_request, ";");
@@ -47,7 +46,6 @@ int parse_command(char *raw_request, int file_descriptor) {
 			strcpy(request.url, token);
 		} else if (line == 2) {
 			// deal with content type
-			strcpy(request.data_type, token);
 			if (strcmp(token, "application/json") == 0) {
 				request.data_type = APPLICATION_JSON;
 			} else if (strcmp(token, "application/xml") == 0) {
@@ -81,7 +79,7 @@ int parse_command(char *raw_request, int file_descriptor) {
 
 int dummy_callback(char* incoming, int file_descriptor) {
 	printf("Inside handler\n");
-	incoming[strlen(incoming) - 2] = '\0';
+	//incoming[strlen(incoming) - 2] = '\0';
 	printf("Data received: %s\n", incoming);
 	printf("Data expected: %s\n", "ping");
 	printf("Comparison: %d\n", strcmp(incoming, "ping"));
@@ -93,7 +91,22 @@ int dummy_callback(char* incoming, int file_descriptor) {
 	}
 }
 
+int creation_callback(char* incoming, int file_descriptor) {
+	char* connection_message = "WebServer by Richard v1.0";
+	char* disconnect_message = "Goodbye from WebServer v1.0!";
+
+	if (strcmp(incoming, "connect") == 0) {
+		send(file_descriptor, connection_message, strlen(connection_message), 0);
+	} else if (strcmp(incoming, "disconnect") == 0) {
+		send(file_descriptor, disconnect_message, strlen(disconnect_message), 0);
+	}
+}
+
 void add_dummy_get() {
+	printf("Adding the creation path\n");
+	add_path("http://localhost:8080/connect");
+	set_callback("http://localhost:8080/connect", &creation_callback);
+	printf("Added the creation path\n");
 	printf("Adding the dummy path\n");
 	add_path("http://localhost:8080/ping");
 	set_callback("http://localhost:8080/ping", &dummy_callback);
